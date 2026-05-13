@@ -1,76 +1,60 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Gavel,
-  Plus,
-  Trash2,
-  Play,
-  Pause,
-  Trophy,
-  Settings,
-  X,
-  SkipForward,
-  RotateCcw,
-  Users,
-  Crown,
-  ChevronRight,
-  BookOpen,
-  Scale,
-} from 'lucide-react';
+import { Gavel, Plus, Trash2, Play, Pause, Trophy, Settings, X, SkipForward, RotateCcw, Users, Crown, ChevronRight, BookOpen, Scale } from 'lucide-react';
 
 // ============================================================================
 // DEBATE TOPICS — Edit this list to add, remove, or change debate prompts.
 // Just follow the format: "Your debate topic here",
 // ============================================================================
 const DEBATE_TOPICS = [
-  'Who would be a better kisser: Donald Trump or Joe Biden?',
-  'Pineapple belongs on pizza.',
-  'Cereal is a soup.',
-  'A hot dog is a sandwich.',
-  'Blue bubbles are better than green bubbles.',
-  'Cats are smarter than dogs.',
-  'Socks with sandals should be socially acceptable.',
-  'The toilet paper roll goes OVER, not under.',
-  'Accountants are the bad boys of the business world.',
-  'You can be friends with the opposite sex with no feelings developing.',
-  'LeBron is better than Jordan.',
-  'Reality TV is the highest form of art.',
-  'Taylor Swift is overrated.',
-  'Crocs are high fashion.',
+  "Who would be a better kisser: Donald Trump or Joe Biden?",
+  "Pineapple belongs on pizza.",
+  "Cereal is a soup.",
+  "A hot dog is a sandwich.",
+  "Blue bubbles are better than green bubbles.",
+  "Cats are smarter than dogs.",
+  "Socks with sandals should be socially acceptable.",
+  "The toilet paper roll goes OVER, not under.",
+  "Accountants are the bad boys of the business world.",
+  "You can be friends with the opposite sex with no feelings developing.",
+  "LeBron is better than Jordan.",
+  "Reality TV is the highest form of art.",
+  "Taylor Swift is overrated.",
+  "Crocs are high fashion.",
   "Mondays aren't actually that bad.",
-  'Water is wet.',
-  'Ghosts are real.',
-  'Pop music peaked in the 2000s.',
+  "Water is wet.",
+  "Ghosts are real.",
+  "Pop music peaked in the 2000s.",
   "It's okay to wear pajamas in public.",
-  'Cardio is better than lifting weights.',
-  'Morning people are superior to night owls.',
-  'The dress was blue and black. End of story.',
-  'Fast food is better than fine dining.',
-  'Gen Z ruined dating.',
-  'Boomers had it easier.',
+  "Cardio is better than lifting weights.",
+  "Morning people are superior to night owls.",
+  "The dress was blue and black. End of story.",
+  "Fast food is better than fine dining.",
+  "Gen Z ruined dating.",
+  "Boomers had it easier.",
   "Texting 'k' is a declaration of war.",
-  'Vacuuming is therapeutic.',
-  'Dogs should be allowed in every restaurant.',
-  'The Beatles are overrated.',
-  'Romantic comedies are the best genre of film.',
-  'Being 10 minutes late is basically on time.',
-  'Ranch goes on everything.',
-  'AI will eventually take over the world.',
-  'Reading the book is always better than watching the movie.',
-  'Everyone secretly loves Nickelback.',
-  'Bigfoot exists.',
-  'The moon landing was staged.',
-  'Cilantro tastes like soap and should be banned.',
-  'Group texts should require a permission slip.',
-  'Working from home is better than the office.',
-  'Christmas music should be played year-round.',
-  'Coffee is better than tea.',
-  'New York pizza beats Chicago pizza.',
-  'Karaoke is a cry for help.',
-  'Clowns are terrifying and should be outlawed.',
-  'Being a flat-earther takes commitment and deserves respect.',
-  'Dad jokes are the highest form of humor.',
-  'Everyone should be required to take an improv class.',
-  'Social media is the downfall of society.',
+  "Vacuuming is therapeutic.",
+  "Dogs should be allowed in every restaurant.",
+  "The Beatles are overrated.",
+  "Romantic comedies are the best genre of film.",
+  "Being 10 minutes late is basically on time.",
+  "Ranch goes on everything.",
+  "AI will eventually take over the world.",
+  "Reading the book is always better than watching the movie.",
+  "Everyone secretly loves Nickelback.",
+  "Bigfoot exists.",
+  "The moon landing was staged.",
+  "Cilantro tastes like soap and should be banned.",
+  "Group texts should require a permission slip.",
+  "Working from home is better than the office.",
+  "Christmas music should be played year-round.",
+  "Coffee is better than tea.",
+  "New York pizza beats Chicago pizza.",
+  "Karaoke is a cry for help.",
+  "Clowns are terrifying and should be outlawed.",
+  "Being a flat-earther takes commitment and deserves respect.",
+  "Dad jokes are the highest form of humor.",
+  "Everyone should be required to take an improv class.",
+  "Social media is the downfall of society.",
   "It's fine to wear white after Labor Day.",
 ];
 
@@ -78,20 +62,20 @@ const DEBATE_TOPICS = [
 // ADVANTAGE & DISADVANTAGE CARDS — Optional twists drawn each round
 // ============================================================================
 const ADVANTAGES = [
-  'Bring in the legal team: pick another player to help you debate.',
-  'Double your argument time.',
-  'Your opponent must speak in a whisper.',
-  'You get to start with a 10-second head start.',
-  'You can demand a fact-check interruption from the group.',
+  "Bring in the legal team: pick another player to help you debate.",
+  "Double your argument time.",
+  "Your opponent must speak in a whisper.",
+  "You get to start with a 10-second head start.",
+  "You can demand a fact-check interruption from the group.",
 ];
 
 const DISADVANTAGES = [
-  'You have to argue while dancing.',
-  'You must speak in a British accent the entire time.',
+  "You have to argue while dancing.",
+  "You must speak in a British accent the entire time.",
   "You can't use the word 'the'.",
   "You must end every sentence with 'your honor'.",
-  'You have to argue in the voice of a cartoon character.',
-  'You must hold a yoga pose the entire round.',
+  "You have to argue in the voice of a cartoon character.",
+  "You must hold a yoga pose the entire round.",
 ];
 
 // ============================================================================
@@ -103,11 +87,13 @@ export default function ThatsDebatable() {
   const [winsToWin, setWinsToWin] = useState(3);
   const [timerSeconds, setTimerSeconds] = useState(45);
   const [useTwists, setUseTwists] = useState(true);
+  const [verdictStyle, setVerdictStyle] = useState('jury'); // 'jury' or 'judge'
 
   // Round state
   const [currentDebaters, setCurrentDebaters] = useState([null, null]);
   const [currentTopic, setCurrentTopic] = useState('');
   const [currentTwist, setCurrentTwist] = useState(null);
+  const [currentJudge, setCurrentJudge] = useState(null);
   const [activeDebater, setActiveDebater] = useState(0); // 0 or 1
   const [timeLeft, setTimeLeft] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -123,8 +109,7 @@ export default function ThatsDebatable() {
   const playSound = (type) => {
     try {
       if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext ||
-          window.webkitAudioContext)();
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
       }
       const ctx = audioCtxRef.current;
       const now = ctx.currentTime;
@@ -197,8 +182,7 @@ export default function ThatsDebatable() {
   const addPlayer = () => {
     const name = newPlayerName.trim();
     if (!name) return;
-    if (players.some((p) => p.name.toLowerCase() === name.toLowerCase()))
-      return;
+    if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) return;
     setPlayers([...players, { name, wins: 0, id: Date.now() }]);
     setNewPlayerName('');
   };
@@ -228,8 +212,7 @@ export default function ThatsDebatable() {
       setUsedTopics([]);
       availableTopics = DEBATE_TOPICS;
     }
-    const topic =
-      availableTopics[Math.floor(Math.random() * availableTopics.length)];
+    const topic = availableTopics[Math.floor(Math.random() * availableTopics.length)];
     setUsedTopics((prev) => [...prev, topic]);
 
     // Maybe pick a twist — biased toward balancing the game
@@ -284,7 +267,20 @@ export default function ThatsDebatable() {
       };
     }
 
+    // Pick a random judge from the non-debating players (only used in 'judge' mode)
+    let judge = null;
+    if (verdictStyle === 'judge') {
+      const nonDebaters = playerList.filter(
+        (p) => p.id !== debaters[0].id && p.id !== debaters[1].id
+      );
+      if (nonDebaters.length > 0) {
+        judge = nonDebaters[Math.floor(Math.random() * nonDebaters.length)];
+      }
+      // If no non-debaters available (only 2 players), judge stays null and we'll fall back to jury vote
+    }
+
     setCurrentDebaters(debaters);
+    setCurrentJudge(judge);
     setCurrentTopic(topic);
     setCurrentTwist(twist);
     setActiveDebater(0);
@@ -352,10 +348,7 @@ export default function ThatsDebatable() {
   // ============ HOME SCREEN ============
   if (screen === 'home') {
     return (
-      <div
-        className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 overflow-hidden relative"
-        style={{ fontFamily: "'Cinzel', 'Playfair Display', Georgia, serif" }}
-      >
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 overflow-hidden relative" style={{ fontFamily: "'Cinzel', 'Playfair Display', Georgia, serif" }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Playfair+Display:wght@400;700;900&display=swap');
           @keyframes slam { 0%,100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-8px); } }
@@ -374,48 +367,23 @@ export default function ThatsDebatable() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-900/20 rounded-full blur-3xl"></div>
 
         <div className="relative z-10 flex flex-col items-center">
-          <div
-            className="judge-slam fade-up"
-            style={{ animationDelay: '0.1s' }}
-          >
+          <div className="judge-slam fade-up" style={{ animationDelay: '0.1s' }}>
             <JudgeIllustration size="w-48 h-48" />
           </div>
 
-          <h1
-            className="title-font text-7xl md:text-8xl text-white mt-4 text-center leading-[0.95] fade-up"
-            style={{
-              animationDelay: '0.3s',
-              textShadow:
-                '4px 4px 0 rgba(220,38,38,0.4), 0 0 60px rgba(255,255,255,0.15)',
-              letterSpacing: '0.01em',
-            }}
-          >
-            That's
-            <br />
-            Debatable
+          <h1 className="title-font text-7xl md:text-8xl text-white mt-4 text-center leading-[0.95] fade-up" style={{ animationDelay: '0.3s', textShadow: '4px 4px 0 rgba(220,38,38,0.4), 0 0 60px rgba(255,255,255,0.15)', letterSpacing: '0.01em' }}>
+            That's<br/>Debatable
           </h1>
 
-          <p
-            className="mt-6 text-zinc-400 italic text-lg tracking-wider fade-up"
-            style={{
-              animationDelay: '0.5s',
-              fontFamily: "'Playfair Display', serif",
-            }}
-          >
+          <p className="mt-6 text-zinc-400 italic text-lg tracking-wider fade-up" style={{ animationDelay: '0.5s', fontFamily: "'Playfair Display', serif" }}>
             Logic, Laughter & Ludicrous debates
           </p>
 
-          <div
-            className="mt-12 flex flex-col gap-4 w-full max-w-sm fade-up"
-            style={{ animationDelay: '0.7s' }}
-          >
+          <div className="mt-12 flex flex-col gap-4 w-full max-w-sm fade-up" style={{ animationDelay: '0.7s' }}>
             <button
               onClick={() => setScreen('setup')}
               className="group relative bg-red-700 hover:bg-red-600 text-white font-black text-xl py-5 px-8 rounded-sm tracking-widest uppercase border-2 border-red-500 transition-all hover:scale-105 active:scale-95"
-              style={{
-                animation: 'pulseRed 3s ease-in-out infinite',
-                fontFamily: "'Cinzel', serif",
-              }}
+              style={{ animation: 'pulseRed 3s ease-in-out infinite', fontFamily: "'Cinzel', serif" }}
             >
               <span className="flex items-center justify-center gap-3">
                 <Gavel className="w-6 h-6" />
@@ -439,9 +407,7 @@ export default function ThatsDebatable() {
           </div>
         </div>
 
-        <div className="absolute bottom-4 text-zinc-600 text-xs tracking-widest uppercase">
-          A Good Company Game
-        </div>
+        <div className="absolute bottom-4 text-zinc-600 text-xs tracking-widest uppercase">A Good Company Game</div>
       </div>
     );
   }
@@ -449,83 +415,74 @@ export default function ThatsDebatable() {
   // ============ SETTINGS ============
   if (screen === 'settings') {
     return (
-      <div
-        className="min-h-screen bg-black text-white p-6"
-        style={{ fontFamily: "'Cinzel', serif" }}
-      >
+      <div className="min-h-screen bg-black text-white p-6" style={{ fontFamily: "'Cinzel', serif" }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=swap'); .title-font { font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif; }`}</style>
         <div className="max-w-md mx-auto pt-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="title-font text-4xl">Settings</h2>
-            <button
-              onClick={() => setScreen('home')}
-              className="p-2 hover:bg-zinc-800 rounded-full"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <button onClick={() => setScreen('home')} className="p-2 hover:bg-zinc-800 rounded-full"><X className="w-6 h-6" /></button>
           </div>
 
           <div className="space-y-6">
             <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-sm">
-              <label className="text-sm uppercase tracking-widest text-zinc-400">
-                Timer per Debater
-              </label>
+              <label className="text-sm uppercase tracking-widest text-zinc-400">Timer per Debater</label>
               <div className="flex items-center gap-3 mt-3">
                 <input
-                  type="range"
-                  min="15"
-                  max="120"
-                  step="5"
+                  type="range" min="15" max="120" step="5"
                   value={timerSeconds}
                   onChange={(e) => setTimerSeconds(+e.target.value)}
                   className="flex-1 accent-red-600"
                 />
-                <span className="text-3xl font-black text-red-500 w-20 text-right">
-                  {timerSeconds}s
-                </span>
+                <span className="text-3xl font-black text-red-500 w-20 text-right">{timerSeconds}s</span>
               </div>
             </div>
 
             <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-sm">
-              <label className="text-sm uppercase tracking-widest text-zinc-400">
-                Rounds to Win
-              </label>
+              <label className="text-sm uppercase tracking-widest text-zinc-400">Rounds to Win</label>
               <div className="flex items-center gap-3 mt-3">
                 <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  step="1"
+                  type="range" min="1" max="10" step="1"
                   value={winsToWin}
                   onChange={(e) => setWinsToWin(+e.target.value)}
                   className="flex-1 accent-red-600"
                 />
-                <span className="text-3xl font-black text-red-500 w-20 text-right">
-                  {winsToWin}
-                </span>
+                <span className="text-3xl font-black text-red-500 w-20 text-right">{winsToWin}</span>
+              </div>
+            </div>
+
+            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-sm">
+              <div className="text-sm uppercase tracking-widest text-zinc-400 mb-3">Verdict Style</div>
+              <div className="text-xs text-zinc-500 mb-4">Who decides the winner of each round</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setVerdictStyle('jury')}
+                  className={`p-4 border-2 transition-all ${verdictStyle === 'jury' ? 'border-red-500 bg-red-950/40' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-600'}`}
+                >
+                  <Users className={`w-6 h-6 mx-auto mb-2 ${verdictStyle === 'jury' ? 'text-red-400' : 'text-zinc-500'}`} />
+                  <div className="text-sm font-black uppercase tracking-wider">Jury</div>
+                  <div className="text-[10px] text-zinc-500 mt-1">Group votes</div>
+                </button>
+                <button
+                  onClick={() => setVerdictStyle('judge')}
+                  className={`p-4 border-2 transition-all ${verdictStyle === 'judge' ? 'border-red-500 bg-red-950/40' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-600'}`}
+                >
+                  <Gavel className={`w-6 h-6 mx-auto mb-2 ${verdictStyle === 'judge' ? 'text-red-400' : 'text-zinc-500'}`} />
+                  <div className="text-sm font-black uppercase tracking-wider">Judge</div>
+                  <div className="text-[10px] text-zinc-500 mt-1">Random player picks</div>
+                </button>
               </div>
             </div>
 
             <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-sm flex items-center justify-between">
               <div>
-                <div className="text-sm uppercase tracking-widest text-zinc-400">
-                  Advantage/Disadvantage Cards
-                </div>
-                <div className="text-xs text-zinc-500 mt-1">
-                  Twists thrown into random rounds
-                </div>
+                <div className="text-sm uppercase tracking-widest text-zinc-400">Advantage/Disadvantage Cards</div>
+                <div className="text-xs text-zinc-500 mt-1">Twists thrown into random rounds</div>
               </div>
               <button
                 onClick={() => setUseTwists(!useTwists)}
-                className={`w-14 h-8 rounded-full relative transition-colors ${
-                  useTwists ? 'bg-red-600' : 'bg-zinc-700'
-                }`}
+                className={`w-14 h-8 rounded-full relative transition-colors ${useTwists ? 'bg-red-600' : 'bg-zinc-700'}`}
               >
-                <div
-                  className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-transform ${
-                    useTwists ? 'translate-x-7' : 'translate-x-1'
-                  }`}
-                ></div>
+                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-transform ${useTwists ? 'translate-x-7' : 'translate-x-1'}`}></div>
               </button>
             </div>
           </div>
@@ -551,8 +508,8 @@ export default function ThatsDebatable() {
       },
       {
         num: '2',
-        title: 'The App is the Judge',
-        body: 'Each round, the app randomly selects two players from your roster and delivers a debate topic from the docket. No arguing with the judge — the judge is impartial (and also a computer).',
+        title: 'The Court is in Session',
+        body: 'Each round, the app randomly selects two players from your roster and delivers a debate topic from the docket. The app handles the matchups so nobody can claim favoritism.',
       },
       {
         num: '3',
@@ -567,12 +524,12 @@ export default function ThatsDebatable() {
       {
         num: '5',
         title: 'Advantage & Disadvantage Cards',
-        body: "Some rounds come with a twist. Advantage cards help the debater they're assigned to (extra time, a teammate, etc.). Disadvantage cards make life harder (argue while dancing, speak in a British accent, etc.). The app favors handing disadvantages to whoever is winning and advantages to whoever is falling behind — to keep things close.",
+        body: 'Some rounds come with a twist. Advantage cards help the debater they\'re assigned to (extra time, a teammate, etc.). Disadvantage cards make life harder (argue while dancing, speak in a British accent, etc.). The app favors handing disadvantages to whoever is winning and advantages to whoever is falling behind — to keep things close.',
       },
       {
         num: '6',
         title: 'Render the Verdict',
-        body: 'After both debaters have argued, every other player acts as the jury and votes on who argued best. Tap the winner on the verdict screen.',
+        body: 'After both debaters have argued, the winner is decided one of two ways (toggle in Settings):\n\n• Jury Mode (default): The whole group votes together by tapping the winner on screen.\n\n• Judge Mode: A non-debating player is randomly chosen as judge for that round and makes the call alone — like the courtroom version of a card game judge, but rotating randomly. Pass the device to them when their name appears. With only 2 players, judge mode falls back to a jury vote since there\'s no third party available.',
       },
       {
         num: '7',
@@ -582,10 +539,7 @@ export default function ThatsDebatable() {
     ];
 
     return (
-      <div
-        className="min-h-screen bg-black text-white p-6 pb-24"
-        style={{ fontFamily: "'Cinzel', serif" }}
-      >
+      <div className="min-h-screen bg-black text-white p-6 pb-24" style={{ fontFamily: "'Cinzel', serif" }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
           .title-font { font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif; }
@@ -596,17 +550,10 @@ export default function ThatsDebatable() {
 
         <div className="max-w-xl mx-auto">
           <div className="flex items-center justify-between pt-4 mb-8">
-            <button
-              onClick={() => setScreen('home')}
-              className="text-zinc-500 hover:text-white text-sm tracking-widest uppercase flex items-center gap-1"
-            >
+            <button onClick={() => setScreen('home')} className="text-zinc-500 hover:text-white text-sm tracking-widest uppercase flex items-center gap-1">
               ← Back
             </button>
-            <button
-              onClick={() => setScreen('home')}
-              className="p-2 hover:bg-zinc-800 rounded-full"
-              aria-label="Close"
-            >
+            <button onClick={() => setScreen('home')} className="p-2 hover:bg-zinc-800 rounded-full" aria-label="Close">
               <X className="w-6 h-6" />
             </button>
           </div>
@@ -618,10 +565,7 @@ export default function ThatsDebatable() {
               <span>Official Rules</span>
               <Scale className="w-4 h-4" />
             </div>
-            <h2
-              className="title-font text-5xl md:text-6xl leading-none"
-              style={{ textShadow: '3px 3px 0 rgba(220,38,38,0.4)' }}
-            >
+            <h2 className="title-font text-5xl md:text-6xl leading-none" style={{ textShadow: '3px 3px 0 rgba(220,38,38,0.4)' }}>
               How to Play
             </h2>
             <div className="flex items-center justify-center gap-2 mt-4 text-zinc-500 text-xs tracking-widest">
@@ -633,18 +577,12 @@ export default function ThatsDebatable() {
 
           {/* Objective card */}
           <div className="bg-gradient-to-br from-red-950/40 to-zinc-900 border-2 border-red-800/60 p-6 mb-8 relative">
-            <div className="absolute top-2 left-3 text-red-500/60 text-[10px] tracking-[0.2em] uppercase">
-              Objective
-            </div>
+            <div className="absolute top-2 left-3 text-red-500/60 text-[10px] tracking-[0.2em] uppercase">Objective</div>
             <div className="flex items-start gap-4 pt-3">
               <Gavel className="w-8 h-8 text-red-500 flex-shrink-0 mt-1" />
               <div>
-                <div className="title-font text-2xl leading-tight">
-                  Be the best debater.
-                </div>
-                <div className="body-serif italic text-zinc-400 mt-1">
-                  Be convincing by any means necessary.
-                </div>
+                <div className="title-font text-2xl leading-tight">Be the best debater.</div>
+                <div className="body-serif italic text-zinc-400 mt-1">Be convincing by any means necessary.</div>
               </div>
             </div>
           </div>
@@ -662,12 +600,8 @@ export default function ThatsDebatable() {
                     {rule.num}
                   </div>
                   <div className="flex-1">
-                    <div className="title-font text-xl text-white leading-none mb-2">
-                      {rule.title}
-                    </div>
-                    <div className="body-serif text-zinc-300 leading-relaxed text-[15px]">
-                      {rule.body}
-                    </div>
+                    <div className="title-font text-xl text-white leading-none mb-2">{rule.title}</div>
+                    <div className="body-serif text-zinc-300 leading-relaxed text-[15px] whitespace-pre-line">{rule.body}</div>
                   </div>
                 </div>
               </div>
@@ -676,12 +610,9 @@ export default function ThatsDebatable() {
 
           {/* Tip card */}
           <div className="mt-8 border-l-4 border-red-600 bg-zinc-950 pl-4 py-3">
-            <div className="text-red-500 text-[10px] tracking-[0.2em] uppercase mb-1">
-              Pro Tip
-            </div>
+            <div className="text-red-500 text-[10px] tracking-[0.2em] uppercase mb-1">Pro Tip</div>
             <div className="body-serif italic text-zinc-300 text-sm">
-              Facts are optional. Confidence is mandatory. When in doubt, bang
-              the metaphorical gavel.
+              Facts are optional. Confidence is mandatory. When in doubt, bang the metaphorical gavel.
             </div>
           </div>
 
@@ -700,24 +631,14 @@ export default function ThatsDebatable() {
   // ============ SETUP SCREEN ============
   if (screen === 'setup') {
     return (
-      <div
-        className="min-h-screen bg-black text-white p-6"
-        style={{ fontFamily: "'Cinzel', serif" }}
-      >
+      <div className="min-h-screen bg-black text-white p-6" style={{ fontFamily: "'Cinzel', serif" }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=swap'); .title-font { font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif; } @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } } .slide-in { animation: slideIn 0.3s ease-out; }`}</style>
 
         <div className="max-w-md mx-auto pt-8">
-          <button
-            onClick={() => setScreen('home')}
-            className="text-zinc-500 hover:text-white text-sm mb-6 tracking-widest uppercase"
-          >
-            ← Back
-          </button>
+          <button onClick={() => setScreen('home')} className="text-zinc-500 hover:text-white text-sm mb-6 tracking-widest uppercase">← Back</button>
 
           <h2 className="title-font text-5xl mb-2">The Defendants</h2>
-          <p className="text-zinc-400 text-sm tracking-widest uppercase mb-8">
-            Add your debaters
-          </p>
+          <p className="text-zinc-400 text-sm tracking-widest uppercase mb-8">Add your debaters</p>
 
           <div className="flex gap-2 mb-6">
             <input
@@ -745,20 +666,14 @@ export default function ThatsDebatable() {
               </div>
             )}
             {players.map((p, i) => (
-              <div
-                key={p.id}
-                className="slide-in flex items-center justify-between bg-zinc-900 border border-zinc-800 px-4 py-3 group hover:border-red-800 transition-colors"
-              >
+              <div key={p.id} className="slide-in flex items-center justify-between bg-zinc-900 border border-zinc-800 px-4 py-3 group hover:border-red-800 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-red-700 flex items-center justify-center font-black text-sm">
                     {i + 1}
                   </div>
                   <span className="font-semibold text-lg">{p.name}</span>
                 </div>
-                <button
-                  onClick={() => removePlayer(p.id)}
-                  className="text-zinc-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
+                <button onClick={() => removePlayer(p.id)} className="text-zinc-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Trash2 className="w-5 h-5" />
                 </button>
               </div>
@@ -767,14 +682,10 @@ export default function ThatsDebatable() {
 
           <div className="bg-zinc-900/50 border border-zinc-800 p-4 mb-6 text-sm">
             <div className="flex items-center justify-between text-zinc-400">
-              <span>Timer:</span>{' '}
-              <span className="text-white font-bold">
-                {timerSeconds}s per debater
-              </span>
+              <span>Timer:</span> <span className="text-white font-bold">{timerSeconds}s per debater</span>
             </div>
             <div className="flex items-center justify-between text-zinc-400 mt-1">
-              <span>First to win:</span>{' '}
-              <span className="text-white font-bold">{winsToWin} rounds</span>
+              <span>First to win:</span> <span className="text-white font-bold">{winsToWin} rounds</span>
             </div>
           </div>
 
@@ -798,10 +709,7 @@ export default function ThatsDebatable() {
     const isLowTime = timeLeft <= 10 && isTimerRunning;
 
     return (
-      <div
-        className="min-h-screen bg-black text-white flex flex-col"
-        style={{ fontFamily: "'Cinzel', serif" }}
-      >
+      <div className="min-h-screen bg-black text-white flex flex-col" style={{ fontFamily: "'Cinzel', serif" }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=swap');
           .title-font { font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif; }
@@ -813,23 +721,16 @@ export default function ThatsDebatable() {
 
         {/* Header scoreboard */}
         <div className="bg-zinc-950 border-b border-zinc-800 px-4 py-3 flex items-center justify-between text-xs">
-          <div className="text-zinc-500 tracking-widest uppercase">
-            Round {roundNumber}
-          </div>
+          <div className="text-zinc-500 tracking-widest uppercase">Round {roundNumber}</div>
           <div className="flex gap-2 overflow-x-auto">
             {players.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center gap-1 bg-zinc-900 px-2 py-1 whitespace-nowrap"
-              >
+              <div key={p.id} className="flex items-center gap-1 bg-zinc-900 px-2 py-1 whitespace-nowrap">
                 <span className="text-zinc-300">{p.name}</span>
                 <span className="text-red-500 font-black">{p.wins}</span>
               </div>
             ))}
           </div>
-          <div className="text-zinc-500 uppercase tracking-widest text-[10px]">
-            To {winsToWin}
-          </div>
+          <div className="text-zinc-500 uppercase tracking-widest text-[10px]">To {winsToWin}</div>
         </div>
 
         <div className="flex-1 flex flex-col p-6 max-w-xl mx-auto w-full">
@@ -837,9 +738,7 @@ export default function ThatsDebatable() {
           {roundPhase === 'intro' && (
             <div className="flex-1 flex flex-col justify-center slam-in">
               <div className="text-center mb-6">
-                <div className="text-zinc-500 text-sm tracking-widest uppercase mb-2">
-                  The Court Summons
-                </div>
+                <div className="text-zinc-500 text-sm tracking-widest uppercase mb-2">The Court Summons</div>
                 <div className="flex items-center justify-center gap-3 text-3xl font-black">
                   <span className="text-white">{p1.name}</span>
                   <span className="text-red-600 text-xl">VS</span>
@@ -848,9 +747,7 @@ export default function ThatsDebatable() {
               </div>
 
               <div className="bg-gradient-to-br from-zinc-900 to-black border-2 border-red-800/50 p-8 my-6 relative">
-                <div className="absolute top-2 left-2 text-zinc-700 text-xs tracking-widest">
-                  CASE #{String(roundNumber).padStart(3, '0')}
-                </div>
+                <div className="absolute top-2 left-2 text-zinc-700 text-xs tracking-widest">CASE #{String(roundNumber).padStart(3, '0')}</div>
                 <div className="text-center mt-4">
                   <div className="title-font text-3xl md:text-4xl leading-tight">
                     "{currentTopic}"
@@ -859,26 +756,21 @@ export default function ThatsDebatable() {
               </div>
 
               {currentTwist && (
-                <div
-                  className={`slam-in border-2 p-4 mb-6 ${
-                    currentTwist.type === 'advantage'
-                      ? 'bg-green-950/40 border-green-600'
-                      : 'bg-red-950/40 border-red-600'
-                  }`}
-                >
-                  <div
-                    className={`text-xs tracking-widest uppercase font-black ${
-                      currentTwist.type === 'advantage'
-                        ? 'text-green-400'
-                        : 'text-red-400'
-                    }`}
-                  >
-                    {currentTwist.type === 'advantage'
-                      ? '★ Advantage'
-                      : '⚠ Disadvantage'}{' '}
-                    — {currentDebaters[currentTwist.forPlayer].name}
+                <div className={`slam-in border-2 p-4 mb-6 ${currentTwist.type === 'advantage' ? 'bg-green-950/40 border-green-600' : 'bg-red-950/40 border-red-600'}`}>
+                  <div className={`text-xs tracking-widest uppercase font-black ${currentTwist.type === 'advantage' ? 'text-green-400' : 'text-red-400'}`}>
+                    {currentTwist.type === 'advantage' ? '★ Advantage' : '⚠ Disadvantage'} — {currentDebaters[currentTwist.forPlayer].name}
                   </div>
                   <div className="mt-2 text-white">{currentTwist.text}</div>
+                </div>
+              )}
+
+              {currentJudge && (
+                <div className="bg-zinc-900 border-2 border-yellow-700/60 p-4 mb-6 flex items-center gap-3">
+                  <Gavel className="w-6 h-6 text-yellow-500 flex-shrink-0" />
+                  <div>
+                    <div className="text-xs tracking-widest uppercase text-yellow-500 font-black">Presiding Judge</div>
+                    <div className="text-white text-lg">{currentJudge.name}</div>
+                  </div>
                 </div>
               )}
 
@@ -895,45 +787,23 @@ export default function ThatsDebatable() {
           {(roundPhase === 'debater1' || roundPhase === 'debater2') && (
             <div className="flex-1 flex flex-col justify-center">
               <div className="text-center mb-4">
-                <div className="text-zinc-500 text-xs tracking-widest uppercase">
-                  Now Arguing
-                </div>
-                <div className="title-font text-5xl mt-1 text-white">
-                  {currentPlayer.name}
-                </div>
-                <div className="text-zinc-400 mt-3 italic text-sm">
-                  "{currentTopic}"
-                </div>
+                <div className="text-zinc-500 text-xs tracking-widest uppercase">Now Arguing</div>
+                <div className="title-font text-5xl mt-1 text-white">{currentPlayer.name}</div>
+                <div className="text-zinc-400 mt-3 italic text-sm">"{currentTopic}"</div>
               </div>
 
               {currentTwist && currentTwist.forPlayer === activeDebater && (
-                <div
-                  className={`border p-3 mb-4 text-center text-sm ${
-                    currentTwist.type === 'advantage'
-                      ? 'bg-green-950/40 border-green-700 text-green-300'
-                      : 'bg-red-950/40 border-red-700 text-red-300'
-                  }`}
-                >
-                  <span className="font-black">
-                    {currentTwist.type === 'advantage' ? '★ ' : '⚠ '}
-                  </span>
+                <div className={`border p-3 mb-4 text-center text-sm ${currentTwist.type === 'advantage' ? 'bg-green-950/40 border-green-700 text-green-300' : 'bg-red-950/40 border-red-700 text-red-300'}`}>
+                  <span className="font-black">{currentTwist.type === 'advantage' ? '★ ' : '⚠ '}</span>
                   {currentTwist.text}
                 </div>
               )}
 
               {/* Big timer */}
-              <div
-                className={`relative aspect-square max-w-xs mx-auto w-full flex items-center justify-center my-6 ${
-                  isLowTime ? 'urgent' : 'bg-zinc-900'
-                } border-4 ${
-                  isLowTime ? 'border-red-400' : 'border-zinc-700'
-                } rounded-full`}
-              >
+              <div className={`relative aspect-square max-w-xs mx-auto w-full flex items-center justify-center my-6 ${isLowTime ? 'urgent' : 'bg-zinc-900'} border-4 ${isLowTime ? 'border-red-400' : 'border-zinc-700'} rounded-full`}>
                 <svg className="absolute inset-0 w-full h-full -rotate-90">
                   <circle
-                    cx="50%"
-                    cy="50%"
-                    r="48%"
+                    cx="50%" cy="50%" r="48%"
                     fill="none"
                     stroke={isLowTime ? '#fca5a5' : '#dc2626'}
                     strokeWidth="8"
@@ -943,36 +813,22 @@ export default function ThatsDebatable() {
                   />
                 </svg>
                 <div className="text-center">
-                  <div className="text-8xl font-black tabular-nums">
-                    {timeLeft}
-                  </div>
-                  <div className="text-xs tracking-widest text-zinc-300 uppercase">
-                    seconds
-                  </div>
+                  <div className="text-8xl font-black tabular-nums">{timeLeft}</div>
+                  <div className="text-xs tracking-widest text-zinc-300 uppercase">seconds</div>
                 </div>
               </div>
 
               <div className="flex gap-2">
                 {isTimerRunning ? (
-                  <button
-                    onClick={pauseTimer}
-                    className="flex-1 bg-zinc-800 border border-zinc-600 py-4 uppercase tracking-widest text-sm hover:bg-zinc-700 flex items-center justify-center gap-2"
-                  >
+                  <button onClick={pauseTimer} className="flex-1 bg-zinc-800 border border-zinc-600 py-4 uppercase tracking-widest text-sm hover:bg-zinc-700 flex items-center justify-center gap-2">
                     <Pause className="w-4 h-4" /> Pause
                   </button>
                 ) : (
-                  <button
-                    onClick={resumeTimer}
-                    className="flex-1 bg-red-700 border border-red-500 py-4 uppercase tracking-widest text-sm hover:bg-red-600 flex items-center justify-center gap-2"
-                  >
+                  <button onClick={resumeTimer} className="flex-1 bg-red-700 border border-red-500 py-4 uppercase tracking-widest text-sm hover:bg-red-600 flex items-center justify-center gap-2">
                     <Play className="w-4 h-4" /> Resume
                   </button>
                 )}
-                <button
-                  onClick={skipTimer}
-                  className="bg-zinc-900 border border-zinc-700 px-5 py-4 hover:bg-zinc-800"
-                  aria-label="Skip"
-                >
+                <button onClick={skipTimer} className="bg-zinc-900 border border-zinc-700 px-5 py-4 hover:bg-zinc-800" aria-label="Skip">
                   <SkipForward className="w-5 h-5" />
                 </button>
               </div>
@@ -983,22 +839,14 @@ export default function ThatsDebatable() {
           {roundPhase === 'transition' && (
             <div className="flex-1 flex flex-col justify-center slam-in">
               <div className="text-center mb-8">
-                <div className="text-red-500 text-sm tracking-widest uppercase mb-2">
-                  Objection! Time's Up
-                </div>
-                <div className="text-zinc-400">
-                  {p1.name} has rested their case.
-                </div>
+                <div className="text-red-500 text-sm tracking-widest uppercase mb-2">Objection! Time's Up</div>
+                <div className="text-zinc-400">{p1.name} has rested their case.</div>
               </div>
 
               <div className="border-2 border-zinc-800 p-6 mb-6 text-center">
-                <div className="text-zinc-500 text-xs uppercase tracking-widest">
-                  Next Up
-                </div>
+                <div className="text-zinc-500 text-xs uppercase tracking-widest">Next Up</div>
                 <div className="title-font text-5xl mt-2">{p2.name}</div>
-                <div className="text-zinc-400 italic text-sm mt-3">
-                  "{currentTopic}"
-                </div>
+                <div className="text-zinc-400 italic text-sm mt-3">"{currentTopic}"</div>
               </div>
 
               <button
@@ -1014,10 +862,20 @@ export default function ThatsDebatable() {
           {roundPhase === 'vote' && (
             <div className="flex-1 flex flex-col justify-center slam-in">
               <div className="text-center mb-6">
-                <div className="text-red-500 text-sm tracking-widest uppercase mb-1">
-                  The Verdict
-                </div>
-                <div className="title-font text-4xl">Who argued best?</div>
+                <div className="text-red-500 text-sm tracking-widest uppercase mb-1">The Verdict</div>
+                {currentJudge ? (
+                  <>
+                    <div className="title-font text-4xl">Judge {currentJudge.name} decides</div>
+                    <div className="text-zinc-400 text-sm mt-2 italic">Hand the device to {currentJudge.name}</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="title-font text-4xl">Who argued best?</div>
+                    {verdictStyle === 'judge' && players.length === 2 && (
+                      <div className="text-zinc-500 text-xs mt-2 italic">(Jury vote — no third player available to judge)</div>
+                    )}
+                  </>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -1039,17 +897,14 @@ export default function ThatsDebatable() {
               </div>
 
               <div className="text-center mt-6 text-xs text-zinc-600 tracking-widest uppercase">
-                The jury decides
+                {currentJudge ? 'The judge has spoken' : 'The jury decides'}
               </div>
             </div>
           )}
         </div>
 
         <div className="border-t border-zinc-900 p-3 flex justify-center">
-          <button
-            onClick={fullReset}
-            className="text-zinc-600 hover:text-red-500 text-xs tracking-widest uppercase flex items-center gap-2"
-          >
+          <button onClick={fullReset} className="text-zinc-600 hover:text-red-500 text-xs tracking-widest uppercase flex items-center gap-2">
             <X className="w-3 h-3" /> End Game
           </button>
         </div>
@@ -1060,10 +915,7 @@ export default function ThatsDebatable() {
   // ============ WINNER SCREEN ============
   if (screen === 'winner') {
     return (
-      <div
-        className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 relative overflow-hidden"
-        style={{ fontFamily: "'Cinzel', serif" }}
-      >
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 relative overflow-hidden" style={{ fontFamily: "'Cinzel', serif" }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=swap');
           .title-font { font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif; }
@@ -1097,24 +949,14 @@ export default function ThatsDebatable() {
             <Crown className="w-24 h-24 text-yellow-400" strokeWidth={1.5} />
           </div>
 
-          <div className="text-red-500 text-sm tracking-[0.3em] uppercase mt-6">
-            By Order of the Court
-          </div>
-          <div className="title-font text-3xl mt-2 text-zinc-300">
-            The Ultimate Debater Is
-          </div>
+          <div className="text-red-500 text-sm tracking-[0.3em] uppercase mt-6">By Order of the Court</div>
+          <div className="title-font text-3xl mt-2 text-zinc-300">The Ultimate Debater Is</div>
 
-          <div
-            className="title-font text-7xl md:text-8xl mt-4 mb-2"
-            style={{ textShadow: '4px 4px 0 rgba(220,38,38,0.5)' }}
-          >
+          <div className="title-font text-7xl md:text-8xl mt-4 mb-2" style={{ textShadow: '4px 4px 0 rgba(220,38,38,0.5)' }}>
             {gameWinner?.name}
           </div>
 
-          <div className="text-xl text-zinc-400 italic">
-            won with {gameWinner?.wins}{' '}
-            {gameWinner?.wins === 1 ? 'round' : 'rounds'}
-          </div>
+          <div className="text-xl text-zinc-400 italic">won with {gameWinner?.wins} {gameWinner?.wins === 1 ? 'round' : 'rounds'}</div>
 
           <div className="flex flex-col gap-3 mt-12 w-full max-w-xs">
             <button
